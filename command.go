@@ -20,6 +20,7 @@ type OutputCommandBuilder struct {
 	leftOf  *Monitor
 	primary bool
 	parent  CommandBuilder
+	off     bool
 }
 
 // DPI sets the dpi --dpi flag
@@ -92,6 +93,13 @@ func (ocb OutputCommandBuilder) MakePrimary() OutputCommandBuilder {
 	return ocb
 }
 
+// Disable sets --off flag
+func (ocb OutputCommandBuilder) Disable() OutputCommandBuilder {
+	ocb.off = true
+
+	return ocb
+}
+
 // SetPrimary sets --primary flag
 func (ocb OutputCommandBuilder) SetPrimary(primary bool) OutputCommandBuilder {
 	ocb.monitor.Primary = primary
@@ -114,6 +122,14 @@ func (ocb OutputCommandBuilder) getCommandArgs() ([]string, error) {
 	}
 
 	args = append(args, "--output", ocb.monitor.ID)
+
+	if ocb.off {
+		args = append(args, "--off")
+		// Short circuit arguments, as getting the mode will fail, and all the other arguments
+		// make no sense if we're turning off that monitor, anyway.
+		return args, nil
+	}
+
 	if ocb.scale != 1 {
 		args = append(args, "--scale", fmt.Sprintf("%0.3fx%0.3f", ocb.scale, ocb.scale))
 	}
