@@ -271,9 +271,6 @@ func parseMonitorLine(line string) (*Monitor, error) {
 	sizeStr := re.FindString(tokens[1])
 
 	if sizeStr == "" {
-		if connected {
-			return nil, fmt.Errorf("could not determine monitor size (mm), expected WWWmm x HHHmm: %s", line)
-		}
 		// Disconnected screens might or might not have a size set. Default to a zero one if not present.
 		sizeStr = "0mm x 0mm"
 	}
@@ -287,9 +284,6 @@ func parseMonitorLine(line string) (*Monitor, error) {
 	re = regexp.MustCompile(`\d+\s*x\s*\d+\+\d+\+\d+`)
 	resStr := re.FindString(tokens[1])
 	if resStr == "" {
-		if connected {
-			return nil, fmt.Errorf("could not determine monitor resolution and position, expected WxH+X+Y: %s", line)
-		}
 		// Disconnected screens might or might not have a resolution set. Default to a zero one if not present.
 		resStr = "0x0+0+0"
 	}
